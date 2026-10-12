@@ -17,6 +17,7 @@ type Entry = {
   tags?: string[];
   bullets: string[];
   note?: string;
+  highlight?: string;
   link?: { label: string; href: string };
 };
 
@@ -24,10 +25,23 @@ type Profile = {
   name: string;
   altName: string;
   role: string;
+  headline: string;
+  affiliation: string;
   focus: string;
   summary: string;
-  nav: { research: string; projects: string; education: string; blog: string; switchLang: string };
-  sections: { research: string; projects: string; education: string; skills: string; recent: string; contact: string };
+  interests: string[];
+  nav: { bio: string; research: string; projects: string; education: string; blog: string; switchLang: string };
+  sections: {
+    summary: string;
+    interests: string;
+    research: string;
+    projects: string;
+    education: string;
+    coursework: string;
+    skills: string;
+    recent: string;
+    contact: string;
+  };
   research: Entry[];
   projects: Entry[];
   education: Entry[];
@@ -40,11 +54,17 @@ export const profile: Record<Lang, Profile> = {
     name: 'Zhenyu Yao',
     altName: '姚振宇',
     role: 'AI undergraduate at Huazhong University of Science and Technology',
+    headline: 'AI Undergraduate',
+    affiliation: 'Huazhong University of Science and Technology',
     focus: 'Computer Vision · Vision-Language Models · Anomaly Detection',
     summary:
       'Artificial Intelligence undergraduate ranked in the top 20% of the program (weighted average 87.1/100). I am researching CLIP-based zero- and few-shot anomaly detection for aero-engine blades, and I am looking for research or algorithm internships in CV, VLMs, and anomaly detection.',
-    nav: { research: 'Research', projects: 'Projects', education: 'Education', blog: 'Blog', switchLang: '中文' },
+    interests: ['Computer Vision', 'Vision-Language Models', 'Industrial Anomaly Detection', 'Reinforcement Learning'],
+    nav: { bio: 'Bio', research: 'Research', projects: 'Projects', education: 'Education', blog: 'Blog', switchLang: '中文' },
     sections: {
+      summary: 'Professional Summary',
+      interests: 'Interests',
+      coursework: 'Coursework',
       research: 'Research',
       projects: 'Projects',
       education: 'Education',
@@ -85,8 +105,8 @@ export const profile: Record<Lang, Profile> = {
         title: 'Huazhong University of Science and Technology',
         org: 'B.Eng. in Artificial Intelligence',
         period: 'Sep 2024 – Present',
+        highlight: 'Top 20% · Weighted avg. 87.1/100',
         bullets: [
-          'Top 20% in major; weighted average 87.1/100.',
           'Mathematics: Control Theory (98), Calculus I (97), Discrete Mathematics (95), Linear Algebra (92), Probability & Statistics (87).',
           'Computing: Computer Organization & Embedded Systems (93), Signal Analysis (92), Object-Oriented Programming (92), Data Science Foundations (89), Introduction to AI (88), Data Structures & Algorithm Analysis (87).',
         ],
@@ -95,8 +115,9 @@ export const profile: Record<Lang, Profile> = {
         title: 'UC Berkeley Summer Sessions',
         org: 'Summer C · International Visitor Undergraduate Program',
         period: 'Jun 22 – Aug 14, 2026',
+        highlight: 'GPA 3.85/4.00',
         bullets: [
-          'GPA 3.85/4.00: COMPSCI 188 Artificial Intelligence (A), DATA C8 Foundations of Data Science (A−).',
+          'COMPSCI 188 Artificial Intelligence (A), DATA C8 Foundations of Data Science (A−).',
         ],
       },
     ],
@@ -112,11 +133,17 @@ export const profile: Record<Lang, Profile> = {
     name: '姚振宇',
     altName: 'Zhenyu Yao',
     role: '华中科技大学 人工智能专业本科生',
+    headline: '人工智能本科生',
+    affiliation: '华中科技大学',
     focus: '计算机视觉 · 视觉语言模型 · 异常检测',
     summary:
       '华中科技大学人工智能专业本科生，专业排名前 20%，加权平均分 87.1/100。正在开展基于 CLIP 的航空发动机叶片零/少样本异常检测研究，寻找计算机视觉、视觉语言模型与异常检测方向的科研或算法实习。',
-    nav: { research: '科研', projects: '项目', education: '教育', blog: '博客', switchLang: 'EN' },
+    interests: ['计算机视觉', '视觉语言模型', '工业异常检测', '强化学习'],
+    nav: { bio: '简介', research: '科研', projects: '项目', education: '教育', blog: '博客', switchLang: 'EN' },
     sections: {
+      summary: '个人简介',
+      interests: '研究兴趣',
+      coursework: '课程成绩',
       research: '科研经历',
       projects: '项目',
       education: '教育背景',
@@ -157,8 +184,8 @@ export const profile: Record<Lang, Profile> = {
         title: '华中科技大学',
         org: '人工智能专业 本科',
         period: '2024.09 – 至今',
+        highlight: '专业前 20% · 加权 87.1/100',
         bullets: [
-          '专业排名前 20%；加权平均分 87.1/100。',
           '数学基础：控制原理 98、微积分（B）（上）97、离散数学 95、线性代数 92、概率论与数理统计（B）87。',
           '计算机与人工智能：计算机组成与嵌入式系统 93、信号分析 92、面向对象的程序设计 92、数据科学基础 89、人工智能导论 88、数据结构与算法分析 87。',
         ],
@@ -167,7 +194,8 @@ export const profile: Record<Lang, Profile> = {
         title: 'UC Berkeley Summer Sessions',
         org: 'Summer C · International Visitor Undergraduate Program',
         period: '2026.06.22 – 2026.08.14',
-        bullets: ['GPA 3.85/4.00：COMPSCI 188 Artificial Intelligence（A）、DATA C8 Foundations of Data Science（A−）。'],
+        highlight: 'GPA 3.85/4.00',
+        bullets: ['COMPSCI 188 Artificial Intelligence（A）、DATA C8 Foundations of Data Science（A−）。'],
       },
     ],
     skills: [

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Entry from './Entry.astro';
+import Icon from './Icon.astro';
 import { profile, links, type Lang } from '../data/profile';
 import { getPosts, formatDate } from '../lib/posts';
 
@@ -9,69 +10,132 @@ const { lang } = Astro.props;
 const p = profile[lang];
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const posts = (await getPosts()).slice(0, 3);
+const t = lang === 'zh'
+  ? { contact: '联系我', blog: '阅读博客', more: '阅读全文' }
+  : { contact: 'Get in touch', blog: 'Read the blog', more: 'Read more' };
 ---
 
 <Base title={lang === 'zh' ? `${p.name} · 个人主页` : `${p.name} · Portfolio`} lang={lang}>
-  <section class="hero" style="margin-top:0">
-    <h1>{p.name}<span class="alt">{p.altName}</span></h1>
-    <p class="role">{p.role}</p>
-    <p class="focus">{p.focus}</p>
-    <p class="summary">{p.summary}</p>
-    <div class="links">
-      <a href={`mailto:${links.email}`}>{links.email}</a>
-      <a href={links.github}>GitHub</a>
-      <a href={`${base}/blog/`}>{p.nav.blog}</a>
+  <section class="hero" id="bio">
+    <div class="hero-inner">
+      <aside class="profile">
+        <div class="avatar" aria-hidden="true"><span>ZY</span></div>
+        <h1 class="name">{p.name}</h1>
+        <p class="alt-name">{p.altName}</p>
+        <p class="headline">{p.headline}</p>
+        <p class="affiliation">{p.affiliation}</p>
+        <div class="socials">
+          <a href={`mailto:${links.email}`} aria-label="Email"><Icon name="mail" /></a>
+          <a href={links.github} aria-label="GitHub"><Icon name="github" /></a>
+        </div>
+      </aside>
+
+      <div class="hero-main">
+        <div class="block">
+          <h2 class="block-title"><span class="bubble"><Icon name="id" /></span>{p.sections.summary}</h2>
+          <p class="summary">{p.summary}</p>
+          <div class="cta">
+            <a class="btn btn-primary" href={`mailto:${links.email}`}><Icon name="send" size={16} />{t.contact}</a>
+            <a class="btn btn-ghost" href={`${base}/blog/`}><Icon name="pen" size={16} />{t.blog}</a>
+          </div>
+        </div>
+
+        <div class="block" id="education">
+          <h2 class="block-title"><span class="bubble"><Icon name="cap" /></span>{p.sections.education}</h2>
+          <div class="edu-grid">
+            {p.education.map((e) => (
+              <div class="edu-card">
+                <span class="bubble small"><Icon name="cap" size={16} /></span>
+                <div>
+                  <h3>{e.org}</h3>
+                  <p class="edu-period">{e.period}</p>
+                  <p class="edu-school">{e.title}</p>
+                  {e.highlight && <p class="edu-highlight">{e.highlight}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="block">
+          <h2 class="block-title"><span class="bubble"><Icon name="sparkles" /></span>{p.sections.interests}</h2>
+          <ul class="chips">
+            {p.interests.map((i) => <li>{i}</li>)}
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section id="research">
-    <h2>{p.sections.research}</h2>
-    {p.research.map((e) => <Entry entry={e} />)}
+  <section class="band" id="research">
+    <div class="wrap">
+      <h2 class="section-title"><span aria-hidden="true">🔬</span> {p.sections.research}</h2>
+      {p.research.map((e) => <Entry entry={e} />)}
+    </div>
   </section>
 
-  <section id="projects">
-    <h2>{p.sections.projects}</h2>
-    {p.projects.map((e) => <Entry entry={e} />)}
+  <section class="band" id="projects">
+    <div class="wrap">
+      <h2 class="section-title"><span aria-hidden="true">🧩</span> {p.sections.projects}</h2>
+      {p.projects.map((e) => <Entry entry={e} />)}
+    </div>
   </section>
 
-  <section id="education">
-    <h2>{p.sections.education}</h2>
-    {p.education.map((e) => <Entry entry={e} />)}
-  </section>
-
-  <section id="skills">
-    <h2>{p.sections.skills}</h2>
-    <dl class="skills">
-      {p.skills.map((s) => (
-        <>
-          <dt>{s.label}</dt>
-          <dd>{s.items}</dd>
-        </>
-      ))}
-    </dl>
+  <section class="band" id="coursework">
+    <div class="wrap two-col">
+      <div class="card">
+        <h2 class="card-title"><span class="bubble small"><Icon name="book" size={16} /></span>{p.sections.coursework}</h2>
+        {p.education.map((e) => (
+          <div class="course-group">
+            <h3>{e.title}</h3>
+            <ul class="bullets">
+              {e.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div class="card">
+        <h2 class="card-title"><span class="bubble small"><Icon name="wrench" size={16} /></span>{p.sections.skills}</h2>
+        <dl class="skills">
+          {p.skills.map((s) => (
+            <>
+              <dt>{s.label}</dt>
+              <dd>{s.items}</dd>
+            </>
+          ))}
+        </dl>
+      </div>
+    </div>
   </section>
 
   {posts.length > 0 && (
-    <section id="recent">
-      <h2>{p.sections.recent}</h2>
-      <ul class="post-list">
-        {posts.map((post) => (
-          <li>
-            <a href={`${base}/blog/${post.id}/`}>{post.data.title}</a>
-            <div><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></div>
-          </li>
-        ))}
-      </ul>
+    <section class="band" id="recent">
+      <div class="wrap">
+        <h2 class="section-title"><span aria-hidden="true">✍️</span> {p.sections.recent}</h2>
+        <div class="post-grid">
+          {posts.map((post) => (
+            <a class="card post-card" href={`${base}/blog/${post.id}/`}>
+              {post.data.tags.length > 0 && <span class="pill">{post.data.tags[0]}</span>}
+              <h3>{post.data.title}</h3>
+              {post.data.description && <p>{post.data.description}</p>}
+              <span class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></span>
+              <span class="read-more">{t.more} <Icon name="arrow" size={15} /></span>
+            </a>
+          ))}
+        </div>
+      </div>
     </section>
   )}
 
-  <section id="contact">
-    <h2>{p.sections.contact}</h2>
-    <p>{p.contactNote}</p>
-    <p class="links">
-      <a href={`mailto:${links.email}`}>{links.email}</a>
-      <a href={`mailto:${links.schoolEmail}`}>{links.schoolEmail}</a>
-      <a href={links.github}>github.com/Yzy0304</a>
-    </p>
+  <section class="band contact" id="contact">
+    <div class="wrap">
+      <h2 class="section-title"><span aria-hidden="true">📬</span> {p.sections.contact}</h2>
+      <p>{p.contactNote}</p>
+      <div class="cta center">
+        <a class="btn btn-primary" href={`mailto:${links.email}`}><Icon name="mail" size={16} />{links.email}</a>
+        <a class="btn btn-ghost" href={`mailto:${links.schoolEmail}`}><Icon name="mail" size={16} />{links.schoolEmail}</a>
+        <a class="btn btn-ghost" href={links.github}><Icon name="github" size={16} />Yzy0304</a>
+      </div>
+    </div>
   </section>
 </Base>

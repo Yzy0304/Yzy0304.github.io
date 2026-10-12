@@ -14,7 +14,7 @@ const { Content } = await render(post);
 ---
 
 <Base title={`${post.data.title} · Zhenyu Yao`} description={post.data.description} lang={post.data.lang}>
-  <article class="prose">
+  <article class="wrap page prose">
     <h1>{post.data.title}</h1>
     <p class="post-meta">
       <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
