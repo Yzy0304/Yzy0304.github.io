@@ -85,8 +85,8 @@ h2 { font-size: 1.15rem; letter-spacing: 0.02em; text-transform: uppercase; colo
 .entry li { margin: 3px 0; }
 .entry .note { font-size: 14px; color: var(--muted); background: var(--note-bg); border-left: 3px solid var(--note-border); padding: 6px 10px; margin: 10px 0 0; border-radius: 0 4px 4px 0; }
 
-.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; padding: 0; list-style: none; }
-.tags li { font-size: 13px; background: var(--tag-bg); color: var(--muted); padding: 1px 8px; border-radius: 999px; }
+.entry .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; padding: 0; list-style: none; }
+.entry .tags li { font-size: 13px; background: var(--tag-bg); color: var(--muted); padding: 1px 8px; border-radius: 999px; }
 
 .skills { display: grid; grid-template-columns: max-content 1fr; gap: 6px 20px; margin: 0; }
 .skills dt { font-weight: 600; }

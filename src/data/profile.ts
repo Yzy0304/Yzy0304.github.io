@@ -61,7 +61,7 @@ export const profile: Record<Lang, Profile> = {
         bullets: [
           'Built and iterated CLIP-based zero-shot and few-shot baselines for image-level and pixel-level anomaly detection on aero-engine blade imagery.',
           'Designed controlled studies of prompt design, memory banks, and geometric test-time augmentation, keeping configurations, metrics, and provenance for reproducibility.',
-          'Under a fixed K1b zero-shot setting, geometric test-time augmentation improved pixel AUROC from 0.902 to 0.924.',
+          'Starting from zero-shot AnomalyCLIP in its official configuration, training-free geometric test-time augmentation (flips, rotations, rescaling) raised pixel AUROC on the 1,639 AeBAD-S test images from 0.902 to 0.924.',
         ],
         note: 'The 0.902 → 0.924 figure is a preliminary result from a single setting. Code is not public.',
       },
@@ -133,7 +133,7 @@ export const profile: Record<Lang, Profile> = {
         bullets: [
           '面向航空发动机叶片图像异常检测，搭建并迭代基于 CLIP 的零样本与少样本检测基线，覆盖图像级与像素级。',
           '围绕提示设计、记忆库与几何测试时增强开展受控对比实验，保留配置、结果与可复现性审计记录。',
-          '固定 K1b 零样本配置下，几何测试时增强使像素级 AUROC 由 0.902 提升至 0.924。',
+          '以官方配置的零样本 AnomalyCLIP 为基线，免训练的几何测试时增强（翻转、旋转、缩放）使 AeBAD-S 全部 1639 张测试图的像素级 AUROC 由 0.902 提升至 0.924。',
         ],
         note: '0.902 → 0.924 为单配置下的初步结果；代码暂未公开。',
       },
