@@ -1,0 +1,32 @@
+---
+interface Props {
+  entry: {
+    title: string;
+    org?: string;
+    period: string;
+    tags?: string[];
+    bullets: string[];
+    note?: string;
+    link?: { label: string; href: string };
+  };
+}
+const { entry } = Astro.props;
+---
+
+<article class="entry">
+  <div class="entry-head">
+    <h3>{entry.title}</h3>
+    <span class="period">{entry.period}</span>
+  </div>
+  {entry.org && <p class="org">{entry.org}</p>}
+  {entry.tags && (
+    <ul class="tags">
+      {entry.tags.map((t) => <li>{t}</li>)}
+    </ul>
+  )}
+  <ul>
+    {entry.bullets.map((b) => <li>{b}</li>)}
+  </ul>
+  {entry.link && <p><a href={entry.link.href}>{entry.link.label}</a></p>}
+  {entry.note && <p class="note">{entry.note}</p>}
+</article>

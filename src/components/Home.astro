@@ -1,0 +1,77 @@
+---
+import Base from '../layouts/Base.astro';
+import Entry from './Entry.astro';
+import { profile, links, type Lang } from '../data/profile';
+import { getPosts, formatDate } from '../lib/posts';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = profile[lang];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const posts = (await getPosts()).slice(0, 3);
+---
+
+<Base title={lang === 'zh' ? `${p.name} · 个人主页` : `${p.name} · Portfolio`} lang={lang}>
+  <section class="hero" style="margin-top:0">
+    <h1>{p.name}<span class="alt">{p.altName}</span></h1>
+    <p class="role">{p.role}</p>
+    <p class="focus">{p.focus}</p>
+    <p class="summary">{p.summary}</p>
+    <div class="links">
+      <a href={`mailto:${links.email}`}>{links.email}</a>
+      <a href={links.github}>GitHub</a>
+      <a href={`${base}/blog/`}>{p.nav.blog}</a>
+    </div>
+  </section>
+
+  <section id="research">
+    <h2>{p.sections.research}</h2>
+    {p.research.map((e) => <Entry entry={e} />)}
+  </section>
+
+  <section id="projects">
+    <h2>{p.sections.projects}</h2>
+    {p.projects.map((e) => <Entry entry={e} />)}
+  </section>
+
+  <section id="education">
+    <h2>{p.sections.education}</h2>
+    {p.education.map((e) => <Entry entry={e} />)}
+  </section>
+
+  <section id="skills">
+    <h2>{p.sections.skills}</h2>
+    <dl class="skills">
+      {p.skills.map((s) => (
+        <>
+          <dt>{s.label}</dt>
+          <dd>{s.items}</dd>
+        </>
+      ))}
+    </dl>
+  </section>
+
+  {posts.length > 0 && (
+    <section id="recent">
+      <h2>{p.sections.recent}</h2>
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li>
+            <a href={`${base}/blog/${post.id}/`}>{post.data.title}</a>
+            <div><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <section id="contact">
+    <h2>{p.sections.contact}</h2>
+    <p>{p.contactNote}</p>
+    <p class="links">
+      <a href={`mailto:${links.email}`}>{links.email}</a>
+      <a href={`mailto:${links.schoolEmail}`}>{links.schoolEmail}</a>
+      <a href={links.github}>github.com/Yzy0304</a>
+    </p>
+  </section>
+</Base>
