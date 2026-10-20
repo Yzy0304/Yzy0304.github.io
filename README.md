@@ -31,7 +31,7 @@ npm run build      # 生产构建到 dist/，草稿不会被构建
 
 ## 首页小助手 Felix
 
-右下角的 Q 版小人 Felix 是一个**离线**助手，只根据 `profile.ts` 回答（关键词匹配，不调用任何 API），逻辑在 `src/lib/assistant.ts`。
+右下角的 Felix 是一个**离线**助手（形象图片：`public/images/felix.png` 半身像、`felix-avatar.png` 头像，透明背景 PNG，替换同名文件即可换形象），只根据 `profile.ts` 回答（关键词匹配，不调用任何 API），逻辑在 `src/lib/assistant.ts`。
 以后要接入大模型：保留界面，把 `reply()` 换成请求你自己的后端，并把 `systemContext(lang)` 作为 system prompt。
 
 ## 开场动画
