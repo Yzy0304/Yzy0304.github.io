@@ -1,0 +1,57 @@
+---
+import { profile, type Lang } from '../../data/profile';
+import { getPosts, formatDate } from '../../lib/posts';
+import { base } from '../../lib/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = profile[lang];
+const zh = lang === 'zh';
+// Blog posts tagged as life writing show up here.
+const lifeTags = ['life', 'daily', '生活', '日常'];
+const posts = (await getPosts()).filter((post) => post.data.tags.some((tag) => lifeTags.includes(tag.toLowerCase())));
+const t = zh
+  ? { moments: '足迹', notes: '生活随笔', soon: '更多照片和故事，敬请期待。', soonText: '给博客文章加上「生活」标签，它就会出现在这里。' }
+  : { moments: 'Places', notes: 'Notes from life', soon: 'More photos and stories soon.', soonText: 'Blog posts tagged “life” will appear here.' };
+---
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-head reveal">{t.moments}</h2>
+    <div class="moments">
+      {p.life.map((m, i) => (
+        <article class={`moment m${i % 3} reveal d${i % 3}`}>
+          {m.image && <><img src={`${base}${m.image}`} alt="" loading="lazy" /><span class="shade"></span></>}
+          <span class="m-period">{m.period}</span>
+          <h3>{m.title}</h3>
+          <p class="m-place">{m.place}</p>
+          <p>{m.text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-head reveal">{t.notes}</h2>
+    {posts.length > 0 ? (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li class="reveal">
+            <a href={`${base}/blog/${post.id}/`} lang={post.data.lang === 'zh' ? 'zh-CN' : 'en'}>
+              <time class="post-meta" datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+              <h2>{post.data.title}</h2>
+              {post.data.description && <p>{post.data.description}</p>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="panel empty-state reveal">
+        <h2>{t.soon}</h2>
+        <p style="margin-bottom:0">{t.soonText}</p>
+      </div>
+    )}
+  </div>
+</section>

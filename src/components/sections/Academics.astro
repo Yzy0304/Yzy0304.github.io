@@ -1,0 +1,80 @@
+---
+import { profile, type Lang } from '../../data/profile';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = profile[lang];
+const zh = lang === 'zh';
+const stats = zh
+  ? [
+      { value: '前 20%', label: '人工智能专业排名', cls: 'grad-1' },
+      { value: '87.1', label: '加权平均分（满分 100）', cls: 'grad-1' },
+      { value: '3.85', label: 'UC Berkeley 暑期 GPA', cls: 'grad-2' },
+      { value: '524', label: '大学英语六级', cls: 'grad-3' },
+    ]
+  : [
+      { value: 'Top 20%', label: 'Rank in the AI program', cls: 'grad-1' },
+      { value: '87.1', label: 'Weighted average (of 100)', cls: 'grad-1' },
+      { value: '3.85', label: 'UC Berkeley summer GPA', cls: 'grad-2' },
+      { value: '524', label: 'CET-6 English', cls: 'grad-3' },
+    ];
+---
+
+<section class="section">
+  <div class="wrap">
+    <div class="stats">
+      {stats.map((s, i) => (
+        <div class={`stat reveal d${i}`}>
+          <b class={s.cls}>{s.value}</b>
+          <span>{s.label}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-head reveal">{p.sections.education}</h2>
+    {p.education.map((e) => (
+      <article class="panel reveal">
+        <div class="entry-head">
+          <h3>{e.title}</h3>
+          <span class="period">{e.period}</span>
+        </div>
+        <p class="org">{e.org}</p>
+        {e.highlight && <span class="highlight">{e.highlight}</span>}
+      </article>
+    ))}
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-head reveal">{p.sections.coursework}</h2>
+    <div class="grades">
+      {p.courses.flatMap((school) =>
+        school.groups.map((g) => (
+          <div class="panel grade-group reveal">
+            <p class="t-eyebrow" style="margin:0 0 4px;color:var(--muted);font-size:14px;font-weight:600">{school.school}</p>
+            <h3>{g.label}</h3>
+            {g.items.map((c) =>
+              c.score !== undefined ? (
+                <div class="grade">
+                  <span>{c.name}</span>
+                  <b>{c.grade}</b>
+                  <div class="track"><div class="fill" style={{ width: `${c.score}%` }}></div></div>
+                </div>
+              ) : (
+                <div class="letter">
+                  <span>{c.name}</span>
+                  <b class="grad-1">{c.grade}</b>
+                </div>
+              ),
+            )}
+          </div>
+        )),
+      )}
+    </div>
+  </div>
+</section>

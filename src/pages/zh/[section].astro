@@ -1,0 +1,11 @@
+---
+import SectionPage from '../../components/SectionPage.astro';
+import { sectionKeys } from '../../data/profile';
+
+export function getStaticPaths() {
+  return sectionKeys.map((section) => ({ params: { section } }));
+}
+const { section } = Astro.params;
+---
+
+<SectionPage lang="zh" section={section} />

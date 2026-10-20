@@ -1,0 +1,72 @@
+---
+import Icon from '../Icon.astro';
+import { profile, type Lang } from '../../data/profile';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = profile[lang];
+const zh = lang === 'zh';
+const t = zh
+  ? { metric: '像素级 AUROC', from: '零样本 AnomalyCLIP 基线', to: '加入几何测试时增强', images: '张 AeBAD-S 测试图像', how: '研究内容', training: '无需额外训练' }
+  : { metric: 'Pixel AUROC', from: 'Zero-shot AnomalyCLIP baseline', to: 'With geometric test-time augmentation', images: 'AeBAD-S test images', how: 'What I do', training: 'No extra training' };
+const icons = ['layers', 'flask', 'target'] as const;
+const colors = ['bg-blue', 'bg-pink', 'bg-green'];
+---
+
+{p.research.map((r) => (
+  <>
+    <section class="section">
+      <div class="wrap">
+        <div class="panel reveal result-panel">
+          <p class="t-eyebrow">{r.title}</p>
+          <div class="result">
+            <div>
+              <b class="num muted">0.902</b>
+              <span>{t.from}</span>
+            </div>
+            <span class="arrow" aria-hidden="true">→</span>
+            <div>
+              <b class="num grad-1">0.924</b>
+              <span>{t.to}</span>
+            </div>
+          </div>
+          <div class="result-foot">
+            <span><strong>{t.metric}</strong></span>
+            <span><strong>1,639</strong>{' '}{t.images}</span>
+            <span><strong>{t.training}</strong></span>
+          </div>
+          {r.note && <p class="note">{r.note}</p>}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2 class="section-head reveal">{t.how}<small>{r.org} · {r.period}</small></h2>
+        <div class="features">
+          {r.bullets.map((b, i) => (
+            <div class={`feature reveal d${i}`}>
+              <span class={`f-icon ${colors[i % 3]}`}><Icon name={icons[i % 3]} size={22} /></span>
+              <p>{b}</p>
+            </div>
+          ))}
+        </div>
+        {r.tags && <ul class="chips reveal" style="justify-content:center;margin-top:28px">{r.tags.map((tag) => <li>{tag}</li>)}</ul>}
+      </div>
+    </section>
+  </>
+))}
+
+<style>
+  .result-panel { text-align: center; }
+  .result-panel .t-eyebrow { margin: 0; color: var(--muted); font-weight: 600; }
+  .result { display: flex; justify-content: center; align-items: center; gap: 12px 40px; flex-wrap: wrap; margin: 28px 0 8px; }
+  .result > div { display: grid; gap: 8px; }
+  .result div span { color: var(--muted); font-size: 15px; }
+  .num { font-size: clamp(64px, 11vw, 120px); font-weight: 700; letter-spacing: -0.05em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .num.muted { color: var(--faint); }
+  .result .arrow { font-size: 40px; color: var(--faint); }
+  .result-foot { display: flex; justify-content: center; gap: 8px 28px; flex-wrap: wrap; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border); font-size: 15px; color: var(--muted); }
+  .result-foot strong { color: var(--text); }
+  .feature p { color: var(--text); }
+</style>

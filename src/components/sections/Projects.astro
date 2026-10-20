@@ -1,0 +1,41 @@
+---
+import Icon from '../Icon.astro';
+import { profile, type Lang } from '../../data/profile';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = profile[lang];
+const icons = ['target', 'sparkles', 'layers'] as const;
+const colors = ['bg-blue', 'bg-pink', 'bg-green'];
+
+// Bullets read "Topic: item, item, …" — split them into a heading and pills.
+const split = (b: string) => {
+  const m = b.match(/^([^:：]+)[:：]\s*(.+?)[.。]?$/);
+  return m ? { head: m[1], items: m[2].split(/,\s*|、/) } : { head: b, items: [] };
+};
+---
+
+{p.projects.map((pr) => (
+  <section class="section">
+    <div class="wrap">
+      <article class="panel reveal">
+        <div class="entry-head">
+          <h3>{pr.title}</h3>
+          <span class="period">{pr.period}</span>
+        </div>
+        <p class="org">{pr.org}</p>
+        {pr.tags && <ul class="chips">{pr.tags.map((tag) => <li>{tag}</li>)}</ul>}
+      </article>
+      <div class="features" style="margin-top:20px">
+        {pr.bullets.map(split).map((b, i) => (
+          <div class={`feature reveal d${i}`}>
+            <span class={`f-icon ${colors[i % 3]}`}><Icon name={icons[i % 3]} size={22} /></span>
+            <h3>{b.head}</h3>
+            <ul class="pills">{b.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+      {pr.note && <p class="note reveal">{pr.note}</p>}
+    </div>
+  </section>
+))}

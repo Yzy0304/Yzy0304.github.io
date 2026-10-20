@@ -1,21 +1,21 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
-import type { Lang } from '../data/profile';
-import { profile } from '../data/profile';
+import Pet from '../components/Pet.astro';
+import { profile, sectionKeys, links, type Lang, type SectionKey } from '../data/profile';
+import { base, href, otherLangPath } from '../lib/i18n';
 
 interface Props {
   title: string;
   description?: string;
   lang?: Lang;
+  current?: SectionKey | 'blog';
+  home?: boolean;
 }
 
-const { title, description, lang = 'en' } = Astro.props;
+const { title, description, lang = 'en', current, home = false } = Astro.props;
 const p = profile[lang];
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const home = lang === 'zh' ? `${base}/zh/` : `${base}/`;
-const otherHome = lang === 'zh' ? `${base}/` : `${base}/zh/`;
-const path = Astro.url.pathname;
+const other = otherLangPath(Astro.url.pathname, lang);
 ---
 
 <!doctype html>
@@ -28,16 +28,16 @@ const path = Astro.url.pathname;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description ?? p.summary} />
     <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title="Blog" href={`${base}/rss.xml`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
-    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     <script is:inline>
-      // Apply the saved theme before first paint to avoid a flash.
+      // Apply the saved theme before first paint, and flag that JS is on (for reveal animations).
+      document.documentElement.classList.add('js');
       try {
         const t = localStorage.getItem('theme');
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
@@ -45,31 +45,45 @@ const path = Astro.url.pathname;
     </script>
   </head>
   <body>
-    <header class="site-header">
-      <div class="nav-inner">
-        <a class="brand" href={home}>{p.name}</a>
-        <nav class="site-nav" aria-label="Main">
-          <a href={`${home}#bio`}>{p.nav.bio}</a>
-          <a href={`${home}#research`}>{p.nav.research}</a>
-          <a href={`${home}#projects`}>{p.nav.projects}</a>
-          <a href={`${home}#education`}>{p.nav.education}</a>
-          <a href={`${base}/blog/`} aria-current={path.startsWith(`${base}/blog`) ? 'page' : undefined}>{p.nav.blog}</a>
-        </nav>
+    <header class="global-nav">
+      <nav class="nav-inner" aria-label="Main">
+        <a class="brand" href={href(lang, 'home')}><span class="brand-mark" aria-hidden="true">ZY</span>{p.name}</a>
+        <ul class="nav-links" id="nav-links">
+          {sectionKeys.map((k) => (
+            <li><a href={href(lang, k)} aria-current={current === k ? 'page' : undefined}>{p.nav[k]}</a></li>
+          ))}
+          <li><a href={`${base}/blog/`} aria-current={current === 'blog' ? 'page' : undefined}>{p.nav.blog}</a></li>
+        </ul>
         <div class="nav-tools">
-          <button class="theme-toggle" type="button" aria-label="Toggle dark mode">
-            <span class="when-light"><Icon name="moon" /></span>
-            <span class="when-dark"><Icon name="sun" /></span>
+          <button class="icon-btn theme-toggle" type="button" aria-label="Toggle dark mode">
+            <span class="when-light"><Icon name="moon" size={16} /></span>
+            <span class="when-dark"><Icon name="sun" size={16} /></span>
           </button>
-          <a class="lang-switch" href={otherHome} lang={lang === 'zh' ? 'en' : 'zh-CN'}>{p.nav.switchLang}</a>
+          <a class="lang-switch" href={other} lang={lang === 'zh' ? 'en' : 'zh-CN'}>{p.nav.switchLang}</a>
+          <button class="icon-btn menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
+            <Icon name="menu" size={18} />
+          </button>
         </div>
-      </div>
+      </nav>
     </header>
+
     <main>
       <slot />
     </main>
+
     <footer class="site-footer">
-      <div class="wrap">© {new Date().getFullYear()} {p.name} · <a href="https://github.com/Yzy0304">GitHub</a></div>
+      <div class="wrap">
+        <span>© {new Date().getFullYear()} {p.name}</span>
+        <nav aria-label="Footer">
+          <a href={`mailto:${links.email}`}>Email</a>
+          <a href={links.github}>GitHub</a>
+          <a href={`${base}/rss.xml`}>RSS</a>
+        </nav>
+      </div>
     </footer>
+
+    <Pet lang={lang} home={home} />
+
     <script is:inline>
       document.querySelector('.theme-toggle').addEventListener('click', () => {
         const root = document.documentElement;
@@ -79,6 +93,23 @@ const path = Astro.url.pathname;
         root.dataset.theme = dark ? 'light' : 'dark';
         try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
       });
+
+      const nav = document.querySelector('.global-nav');
+      const menuBtn = nav.querySelector('.menu-btn');
+      menuBtn.addEventListener('click', () => {
+        const open = nav.classList.toggle('nav-open');
+        menuBtn.setAttribute('aria-expanded', String(open));
+      });
+      nav.querySelectorAll('.nav-links a').forEach((a) => a.addEventListener('click', () => nav.classList.remove('nav-open')));
+
+      // Fade sections in as they scroll into view.
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }),
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+      );
+      const reveal = () => document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+      if (document.getElementById('intro')) addEventListener('intro:done', reveal, { once: true });
+      else reveal();
     </script>
   </body>
 </html>

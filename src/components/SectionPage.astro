@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Academics from './sections/Academics.astro';
+import Research from './sections/Research.astro';
+import Projects from './sections/Projects.astro';
+import Internships from './sections/Internships.astro';
+import Resume from './sections/Resume.astro';
+import Life from './sections/Life.astro';
+import { profile, type Lang, type SectionKey } from '../data/profile';
+
+interface Props { lang: Lang; section: SectionKey }
+const { lang, section } = Astro.props;
+const p = profile[lang];
+const meta = p.pages[section];
+const Body = { academics: Academics, research: Research, projects: Projects, internships: Internships, resume: Resume, life: Life }[section];
+const accent = { academics: 'grad-1', research: 'grad-1', projects: 'grad-3', internships: 'grad-3', resume: 'grad-1', life: 'grad-2' }[section];
+---
+
+<Base title={`${meta.title} · ${p.name}`} description={meta.lead} lang={lang} current={section}>
+  <header class="page-hero">
+    <div class="wrap">
+      <p class={`eyebrow reveal ${accent}`}>{meta.eyebrow}</p>
+      <h1 class="reveal d1">{meta.title}</h1>
+      <p class="lead reveal d2">{meta.lead}</p>
+    </div>
+  </header>
+  <Body lang={lang} />
+</Base>

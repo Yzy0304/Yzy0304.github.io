@@ -1,0 +1,59 @@
+---
+import { profile, links, type Lang } from '../../data/profile';
+import { href } from '../../lib/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = profile[lang];
+const zh = lang === 'zh';
+const t = zh
+  ? { open: '正在寻找实习', title: '下一段经历，期待与你一起。', body: p.contactNote, email: '发邮件联系', resume: '查看简历', looking: '我在寻找' }
+  : { open: 'Open to internships', title: 'The next chapter starts here.', body: p.contactNote, email: 'Get in touch', resume: 'View résumé', looking: "What I'm looking for" };
+---
+
+{p.internships.length > 0 && (
+  <section class="section">
+    <div class="wrap">
+      {p.internships.map((e) => (
+        <article class="panel reveal">
+          <div class="entry-head">
+            <h3>{e.title}</h3>
+            <span class="period">{e.period}</span>
+          </div>
+          {e.org && <p class="org">{e.org}</p>}
+          <ul class="bullets">{e.bullets.map((b) => <li>{b}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+
+<section class="section">
+  <div class="wrap">
+    <div class="panel empty-state reveal">
+      <span class="status"><span class="dot"></span>{t.open}</span>
+      <h2>{t.title}</h2>
+      <p>{t.body}</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href={`mailto:${links.email}`}>{t.email}</a>
+        <a class="more" href={href(lang, 'resume')}>{t.resume}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-head reveal">{t.looking}</h2>
+    <div class="panel reveal">
+      <dl class="kv">
+        {p.seeking.map((s) => (
+          <>
+            <dt>{s.label}</dt>
+            <dd>{s.value}</dd>
+          </>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section>

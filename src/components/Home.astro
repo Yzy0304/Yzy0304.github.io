@@ -1,141 +1,236 @@
 ---
 import Base from '../layouts/Base.astro';
-import Entry from './Entry.astro';
-import Icon from './Icon.astro';
+import Intro from './Intro.astro';
 import { profile, links, type Lang } from '../data/profile';
 import { getPosts, formatDate } from '../lib/posts';
+import { petName } from '../lib/assistant';
+import { base, href } from '../lib/i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const p = profile[lang];
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pg = p.pages;
 const posts = (await getPosts()).slice(0, 3);
-const t = lang === 'zh'
-  ? { contact: '联系我', blog: '阅读博客', more: '阅读全文' }
-  : { contact: 'Get in touch', blog: 'Read the blog', more: 'Read more' };
+const research = p.research[0];
+const zh = lang === 'zh';
+const t = zh
+  ? {
+      chat: `和 ${petName} 聊聊`,
+      resume: '查看简历',
+      more: '了解更多',
+      rank: '专业排名',
+      gpa: 'Berkeley GPA',
+      cet: '英语六级',
+      avg: '加权平均分',
+      auroc: 'AeBAD-S 像素级 AUROC · 初步结果',
+      baseline: '零样本基线',
+      tta: '+ 测试时增强',
+      open: '正在寻找实习',
+      petEyebrow: '你的向导',
+      petTitle: `认识一下 ${petName}`,
+      petText: '一个住在主页里的小助手，问它任何关于振宇的问题。',
+      petSample: '振宇在做什么研究？',
+      blogTitle: '博客',
+      blogText: '关于计算机视觉、视觉语言模型与异常检测的笔记。',
+      noPosts: '第一篇文章正在路上。',
+      contactTitle: '一起聊聊？',
+      write: '发邮件给我',
+      wuhan: '武汉',
+      berkeley: '伯克利',
+    }
+  : {
+      chat: `Chat with ${petName}`,
+      resume: 'View résumé',
+      more: 'Learn more',
+      rank: 'Program rank',
+      gpa: 'Berkeley GPA',
+      cet: 'CET-6',
+      avg: 'Weighted average',
+      auroc: 'Pixel AUROC on AeBAD-S · preliminary',
+      baseline: 'Zero-shot baseline',
+      tta: '+ Test-time aug.',
+      open: 'Open to internships',
+      petEyebrow: 'Your guide',
+      petTitle: `Meet ${petName}`,
+      petText: 'A tiny assistant who lives on this page. Ask it anything about Zhenyu.',
+      petSample: 'What is Zhenyu researching?',
+      blogTitle: 'Blog',
+      blogText: 'Notes on computer vision, vision-language models, and anomaly detection.',
+      noPosts: 'The first post is on its way.',
+      contactTitle: "Let's talk.",
+      write: 'Write me an email',
+      wuhan: 'Wuhan',
+      berkeley: 'Berkeley',
+    };
+// Bar heights for the AUROC chart, on a 0.85–0.95 axis so the change is visible.
+const bar = (v: number) => `${Math.round(((v - 0.85) / 0.1) * 100)}%`;
 ---
 
-<Base title={lang === 'zh' ? `${p.name} · 个人主页` : `${p.name} · Portfolio`} lang={lang}>
-  <section class="hero" id="bio">
-    <div class="hero-inner">
-      <aside class="profile">
-        <div class="avatar" aria-hidden="true"><span>ZY</span></div>
-        <h1 class="name">{p.name}</h1>
-        <p class="alt-name">{p.altName}</p>
-        <p class="headline">{p.headline}</p>
-        <p class="affiliation">{p.affiliation}</p>
-        <div class="socials">
-          <a href={`mailto:${links.email}`} aria-label="Email"><Icon name="mail" /></a>
-          <a href={links.github} aria-label="GitHub"><Icon name="github" /></a>
-        </div>
-      </aside>
+<Base title={zh ? `${p.name} · 个人主页` : `${p.name} · Personal Blog`} lang={lang} home>
+  <Intro lang={lang} />
 
-      <div class="hero-main">
-        <div class="block">
-          <h2 class="block-title"><span class="bubble"><Icon name="id" /></span>{p.sections.summary}</h2>
-          <p class="summary">{p.summary}</p>
-          <div class="cta">
-            <a class="btn btn-primary" href={`mailto:${links.email}`}><Icon name="send" size={16} />{t.contact}</a>
-            <a class="btn btn-ghost" href={`${base}/blog/`}><Icon name="pen" size={16} />{t.blog}</a>
+  <section class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow reveal">{p.hero.eyebrow}</p>
+      <h1 class="reveal d1"><span>{p.hero.tagline[0]}</span><span class="grad-1">{p.hero.tagline[1]}</span></h1>
+      <p class="sub reveal d2">{p.hero.sub}</p>
+      <div class="cta-row reveal d3">
+        <button type="button" class="btn btn-primary" data-open-pet>{t.chat}</button>
+        <a class="more" href={href(lang, 'resume')}>{t.resume}</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap wide">
+    <div class="bento">
+      <a class="tile span-7 reveal" href={href(lang, 'academics')}>
+        <p class="t-eyebrow">{pg.academics.eyebrow}</p>
+        <h2>{pg.academics.title}</h2>
+        <p class="t-text">{pg.academics.card}</p>
+        <span class="more">{t.more}</span>
+        <div class="t-art">
+          <div class="big-num grad-1">87.1<small>/100</small></div>
+          <p class="art-caption">{t.avg}</p>
+          <div class="mini-stats">
+            <div><b>{zh ? '前 20%' : 'Top 20%'}</b><span>{t.rank}</span></div>
+            <div><b>3.85</b><span>{t.gpa}</span></div>
+            <div><b>524</b><span>{t.cet}</span></div>
           </div>
         </div>
+      </a>
 
-        <div class="block" id="education">
-          <h2 class="block-title"><span class="bubble"><Icon name="cap" /></span>{p.sections.education}</h2>
-          <div class="edu-grid">
-            {p.education.map((e) => (
-              <div class="edu-card">
-                <span class="bubble small"><Icon name="cap" size={16} /></span>
-                <div>
-                  <h3>{e.org}</h3>
-                  <p class="edu-period">{e.period}</p>
-                  <p class="edu-school">{e.title}</p>
-                  {e.highlight && <p class="edu-highlight">{e.highlight}</p>}
-                </div>
-              </div>
+      <a class="tile dark span-5 reveal d1" href={href(lang, 'research')}>
+        <p class="t-eyebrow">{pg.research.eyebrow}</p>
+        <h2>{pg.research.title}</h2>
+        <p class="t-text">{pg.research.card}</p>
+        <span class="more">{t.more}</span>
+        <div class="t-art">
+          <div class="auroc">
+            <div class="bar before" style={{ height: bar(0.902) }}>0.902</div>
+            <div class="bar after" style={{ height: bar(0.924) }}>0.924</div>
+          </div>
+          <p class="art-caption" style="display:flex;justify-content:space-around"><span>{t.baseline}</span><span>{t.tta}</span></p>
+          <p class="art-caption">{t.auroc}</p>
+        </div>
+      </a>
+
+      <a class="tile span-4 reveal" href={href(lang, 'projects')}>
+        <p class="t-eyebrow">{pg.projects.eyebrow}</p>
+        <h2>{pg.projects.title}</h2>
+        <p class="t-text">{pg.projects.card}</p>
+        <span class="more">{t.more}</span>
+        <div class="t-art">
+          <ul class="pills">{p.projects[0].tags?.map((tag) => <li>{tag}</li>)}</ul>
+        </div>
+      </a>
+
+      <a class="tile span-4 reveal d1" href={href(lang, 'internships')}>
+        <p class="t-eyebrow">{pg.internships.eyebrow}</p>
+        <h2>{pg.internships.title}</h2>
+        <p class="t-text">{pg.internships.card}</p>
+        <span class="more">{t.more}</span>
+        <div class="t-art">
+          <span class="status"><span class="dot"></span>{t.open}</span>
+        </div>
+      </a>
+
+      <a class="tile span-4 reveal d2" href={href(lang, 'resume')}>
+        <p class="t-eyebrow">{pg.resume.eyebrow}</p>
+        <h2>{pg.resume.title}</h2>
+        <p class="t-text">{pg.resume.card}</p>
+        <span class="more">{t.more}</span>
+        <div class="t-art doc-art" aria-hidden="true">
+          <div class="sheet back"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="sheet"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+      </a>
+
+      <a class="tile dark span-7 reveal" href={href(lang, 'life')}>
+        <p class="t-eyebrow">{pg.life.eyebrow}</p>
+        <h2>{pg.life.title}</h2>
+        <p class="t-text">{pg.life.card}</p>
+        <span class="more">{t.more}</span>
+        <div class="t-art">
+          <svg class="route" viewBox="0 0 520 150" aria-hidden="true">
+            <defs>
+              <linearGradient id="route-g" x1="0" x2="1">
+                <stop offset="0" stop-color="#ff9f0a" />
+                <stop offset="0.5" stop-color="#ff375f" />
+                <stop offset="1" stop-color="#5e5ce6" />
+              </linearGradient>
+            </defs>
+            <path class="arc" d="M60 110 C 170 -10, 350 -10, 460 110" fill="none" stroke="url(#route-g)" stroke-width="3" stroke-linecap="round" />
+            <circle cx="60" cy="110" r="7" fill="#ff9f0a" />
+            <circle cx="460" cy="110" r="7" fill="#5e5ce6" />
+            <text x="60" y="140" text-anchor="middle">{t.wuhan}</text>
+            <text x="460" y="140" text-anchor="middle">{t.berkeley}</text>
+            <text class="sub" x="60" y="92" text-anchor="middle">2024 –</text>
+            <text class="sub" x="460" y="92" text-anchor="middle">2026</text>
+          </svg>
+        </div>
+      </a>
+
+      <button type="button" class="tile span-5 pet-tile reveal d1" data-open-pet data-ask={t.petSample}>
+        <p class="t-eyebrow">{t.petEyebrow}</p>
+        <h2>{t.petTitle}</h2>
+        <p class="t-text">{t.petText}</p>
+        <span class="more">{t.chat}</span>
+        <div class="t-art pet-stage" aria-hidden="true">
+          <span class="pet-says">{t.petSample}</span>
+          <svg viewBox="0 0 120 120"><use href="#pet-face" /></svg>
+        </div>
+      </button>
+
+      <div class="tile span-12 blog-tile reveal">
+        <p class="t-eyebrow">{zh ? '最新' : 'Latest'}</p>
+        <h2>{t.blogTitle}</h2>
+        <p class="t-text">{t.blogText}</p>
+        {posts.length > 0 ? (
+          <ul class="posts-mini">
+            {posts.map((post) => (
+              <li>
+                <a href={`${base}/blog/${post.id}/`} lang={post.data.lang === 'zh' ? 'zh-CN' : 'en'}>
+                  <span>{post.data.title}</span>
+                  <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                </a>
+              </li>
             ))}
-          </div>
-        </div>
-
-        <div class="block">
-          <h2 class="block-title"><span class="bubble"><Icon name="sparkles" /></span>{p.sections.interests}</h2>
-          <ul class="chips">
-            {p.interests.map((i) => <li>{i}</li>)}
           </ul>
-        </div>
+        ) : (
+          <p class="art-caption">{t.noPosts}</p>
+        )}
+        <a class="more" href={`${base}/blog/`}>{t.more}</a>
       </div>
     </div>
-  </section>
+  </div>
 
-  <section class="band" id="research">
-    <div class="wrap">
-      <h2 class="section-title"><span aria-hidden="true">🔬</span> {p.sections.research}</h2>
-      {p.research.map((e) => <Entry entry={e} />)}
-    </div>
-  </section>
-
-  <section class="band" id="projects">
-    <div class="wrap">
-      <h2 class="section-title"><span aria-hidden="true">🧩</span> {p.sections.projects}</h2>
-      {p.projects.map((e) => <Entry entry={e} />)}
-    </div>
-  </section>
-
-  <section class="band" id="coursework">
-    <div class="wrap two-col">
-      <div class="card">
-        <h2 class="card-title"><span class="bubble small"><Icon name="book" size={16} /></span>{p.sections.coursework}</h2>
-        {p.education.map((e) => (
-          <div class="course-group">
-            <h3>{e.title}</h3>
-            <ul class="bullets">
-              {e.bullets.map((b) => <li>{b}</li>)}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div class="card">
-        <h2 class="card-title"><span class="bubble small"><Icon name="wrench" size={16} /></span>{p.sections.skills}</h2>
-        <dl class="skills">
-          {p.skills.map((s) => (
-            <>
-              <dt>{s.label}</dt>
-              <dd>{s.items}</dd>
-            </>
-          ))}
-        </dl>
-      </div>
-    </div>
-  </section>
-
-  {posts.length > 0 && (
-    <section class="band" id="recent">
-      <div class="wrap">
-        <h2 class="section-title"><span aria-hidden="true">✍️</span> {p.sections.recent}</h2>
-        <div class="post-grid">
-          {posts.map((post) => (
-            <a class="card post-card" href={`${base}/blog/${post.id}/`}>
-              {post.data.tags.length > 0 && <span class="pill">{post.data.tags[0]}</span>}
-              <h3>{post.data.title}</h3>
-              {post.data.description && <p>{post.data.description}</p>}
-              <span class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></span>
-              <span class="read-more">{t.more} <Icon name="arrow" size={15} /></span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
-  <section class="band contact" id="contact">
-    <div class="wrap">
-      <h2 class="section-title"><span aria-hidden="true">📬</span> {p.sections.contact}</h2>
-      <p>{p.contactNote}</p>
-      <div class="cta center">
-        <a class="btn btn-primary" href={`mailto:${links.email}`}><Icon name="mail" size={16} />{links.email}</a>
-        <a class="btn btn-ghost" href={`mailto:${links.schoolEmail}`}><Icon name="mail" size={16} />{links.schoolEmail}</a>
-        <a class="btn btn-ghost" href={links.github}><Icon name="github" size={16} />Yzy0304</a>
+  <section class="hero contact-cta">
+    <div class="wrap narrow">
+      <h2 class="reveal">{t.contactTitle}</h2>
+      <p class="sub reveal d1">{p.contactNote}</p>
+      <div class="cta-row reveal d2">
+        <a class="btn btn-primary" href={`mailto:${links.email}`}>{t.write}</a>
+        <a class="more" href={links.github}>GitHub</a>
       </div>
     </div>
   </section>
 </Base>
+
+<style>
+  .pet-tile { background: linear-gradient(160deg, var(--card) 40%, rgba(94, 92, 230, 0.12)); }
+  .pet-stage { position: relative; display: flex; justify-content: center; align-items: flex-end; min-height: 170px; }
+  .pet-stage svg { width: 150px; height: 150px; transition: transform 0.6s var(--ease); filter: drop-shadow(0 16px 24px rgba(94, 92, 230, 0.35)); }
+  .pet-tile:hover .pet-stage svg { transform: translateY(-6px) rotate(-4deg); }
+  .pet-says {
+    position: absolute; top: 0; left: 50%; transform: translateX(-112%); max-width: 200px;
+    padding: 8px 14px; border-radius: 16px 16px 4px 16px; background: var(--accent); color: #fff; font-size: 14px; line-height: 1.3;
+  }
+  .blog-tile { min-height: 0; }
+  .contact-cta { padding: 88px 0 112px; }
+  .contact-cta h2 { margin: 0; font-size: clamp(40px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; }
+  .contact-cta .sub { margin: 16px auto 30px; }
+  @media (max-width: 640px) {
+    .pet-says { transform: translateX(-100%); max-width: 160px; }
+  }
+</style>
