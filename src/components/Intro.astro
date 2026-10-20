@@ -1,0 +1,146 @@
+---
+// Full-screen intro in the style of the macOS "hello" setup screen: the words are
+// written out stroke by stroke in a single-line script, then the page fades in.
+// Shown once per browser session; click or press any key to skip.
+import { helloLines } from '../data/hello';
+
+interface Props { lang: 'en' | 'zh' }
+const { lang } = Astro.props;
+const skip = lang === 'zh' ? '点击任意处跳过' : 'Click anywhere to skip';
+const stops = ['#0a84ff', '#5e5ce6', '#bf5af2', '#ff375f', '#ff9f0a'];
+---
+
+<div class="intro" id="intro" role="presentation">
+  <div class="intro-stage" role="img" aria-label={helloLines.map((l) => l.text).join(' ')}>
+    {helloLines.map((line, i) => {
+      const [x, , w] = line.viewBox.split(' ').map(Number);
+      return (
+        <svg class={`hello l${i + 1}`} viewBox={line.viewBox} aria-hidden="true">
+          <defs>
+            <linearGradient id={`hello-g${i}`} gradientUnits="userSpaceOnUse" x1={x} x2={x + w} y1="0" y2="0">
+              {stops.map((c, j) => <stop offset={j / (stops.length - 1)} stop-color={c} />)}
+            </linearGradient>
+          </defs>
+          <g stroke={`url(#hello-g${i})`}>
+            {line.paths.map((d) => <path d={d} />)}
+          </g>
+        </svg>
+      );
+    })}
+  </div>
+  <p class="intro-skip">{skip}</p>
+</div>
+<noscript><style>.intro { display: none; }</style></noscript>
+<script is:inline>
+  // Decide before first paint so returning visitors never see the overlay flash.
+  try {
+    if (sessionStorage.getItem('introSeen')) document.getElementById('intro').remove();
+    else document.documentElement.classList.add('intro-lock');
+  } catch (e) {
+    document.documentElement.classList.add('intro-lock');
+  }
+</script>
+
+<script>
+  const intro = document.getElementById('intro');
+  if (intro) {
+    const lines = [...intro.querySelectorAll<SVGSVGElement>('svg.hello')];
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const LINE_MS = [2300, 2600];
+    const GAP_MS = 220;
+    const HOLD_MS = reduce ? 1400 : 900;
+    let finished = false;
+    let raf = 0;
+
+    const strokes = lines.map((svg) => {
+      const paths = [...svg.querySelectorAll('path')];
+      const lens = paths.map((p) => p.getTotalLength());
+      const total = lens.reduce((a, b) => a + b, 0);
+      paths.forEach((p, i) => {
+        p.style.strokeDasharray = `${lens[i]} ${lens[i]}`;
+        p.style.strokeDashoffset = reduce ? '0' : `${lens[i]}`;
+      });
+      return { paths, lens, total };
+    });
+    intro.classList.add('ready');
+
+    // Ease like a hand: slow start, quick middle, gentle finish.
+    const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2) * 0.85 + t * 0.15;
+
+    function draw(line: (typeof strokes)[number], progress: number) {
+      let budget = ease(progress) * line.total;
+      line.paths.forEach((p, i) => {
+        const len = line.lens[i];
+        const shown = Math.max(0, Math.min(len, budget));
+        p.style.strokeDashoffset = `${len - shown}`;
+        budget -= len;
+      });
+    }
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      cancelAnimationFrame(raf);
+      try { sessionStorage.setItem('introSeen', '1'); } catch (e) {}
+      intro!.classList.add('done');
+      document.documentElement.classList.remove('intro-lock');
+      dispatchEvent(new Event('intro:done'));
+      setTimeout(() => intro!.remove(), 1100);
+    }
+
+    const start = performance.now();
+    const bounds: [number, number][] = [];
+    let t0 = 300;
+    for (const ms of LINE_MS) {
+      bounds.push([t0, t0 + ms]);
+      t0 += ms + GAP_MS;
+    }
+    const end = t0 - GAP_MS;
+
+    function tick(now: number) {
+      const t = now - start;
+      strokes.forEach((line, i) => {
+        const [a, b] = bounds[i];
+        draw(line, Math.min(1, Math.max(0, (t - a) / (b - a))));
+      });
+      if (t < end) raf = requestAnimationFrame(tick);
+      else setTimeout(finish, HOLD_MS);
+    }
+
+    if (reduce) setTimeout(finish, HOLD_MS);
+    else raf = requestAnimationFrame(tick);
+
+    intro.addEventListener('click', finish);
+    addEventListener('keydown', finish, { once: true });
+  }
+</script>
+
+<style is:global>
+  .intro-lock, .intro-lock body { overflow: hidden; }
+  .intro {
+    position: fixed; inset: 0; z-index: 100;
+    display: grid; place-items: center;
+    background: var(--bg);
+    cursor: pointer;
+    transition: opacity 1s cubic-bezier(0.28, 0.11, 0.32, 1), transform 1s cubic-bezier(0.28, 0.11, 0.32, 1), filter 1s;
+  }
+  .intro.done { opacity: 0; transform: scale(1.06); filter: blur(8px); pointer-events: none; }
+  .intro-stage { display: grid; justify-items: center; gap: clamp(8px, 2vw, 22px); transform: translateY(-4%); }
+  .hello { display: block; height: auto; overflow: visible; }
+  .intro:not(.ready) .hello { visibility: hidden; }
+  .hello g { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .hello.l1 { width: min(84vw, 760px); }
+  .hello.l1 g { stroke-width: 46; }
+  .hello.l2 { width: calc(min(84vw, 760px) * 0.913); }
+  .hello.l2 g { stroke-width: 72; }
+  @media (max-width: 560px) {
+    .hello.l1 g { stroke-width: 64; }
+    .hello.l2 g { stroke-width: 100; }
+  }
+  .intro-skip {
+    position: absolute; bottom: 36px; left: 0; right: 0; margin: 0;
+    text-align: center; font-size: 13px; color: var(--faint);
+    opacity: 0; animation: intro-hint 0.8s 2.4s forwards;
+  }
+  @keyframes intro-hint { to { opacity: 1; } }
+</style>

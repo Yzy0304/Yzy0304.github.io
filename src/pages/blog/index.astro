@@ -1,28 +1,40 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getPosts, formatDate } from '../../lib/posts';
+import { base } from '../../lib/i18n';
 
 const posts = await getPosts();
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<Base title="Blog · Zhenyu Yao" description="Notes on computer vision, vision-language models, and anomaly detection.">
-  <div class="wrap page">
-    <h1 class="page-title">Blog</h1>
-    <p class="page-lead">Notes on computer vision, vision-language models, and anomaly detection. Posts are written in Chinese or English.</p>
-    {posts.length === 0 ? (
-      <p class="empty">No posts yet.</p>
-    ) : (
-      <ul class="post-list">
-        {posts.map((post) => (
-          <li class="card">
-            <a class="title" href={`${base}/blog/${post.id}/`} lang={post.data.lang === 'zh' ? 'zh-CN' : 'en'}>{post.data.title}</a>
-            {post.data.draft && <span class="pill"> draft</span>}
-            <span class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>{post.data.tags.length > 0 && ` · ${post.data.tags.join(' · ')}`}</span>
-            {post.data.description && <p>{post.data.description}</p>}
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
+<Base title="Blog · Zhenyu Yao" description="Notes on computer vision, vision-language models, and anomaly detection." current="blog">
+  <header class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow reveal grad-1">Notes</p>
+      <h1 class="reveal d1">Blog</h1>
+      <p class="lead reveal d2">Notes on computer vision, vision-language models, and anomaly detection. Posts are written in Chinese or English.</p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="wrap narrow">
+      {posts.length === 0 ? (
+        <p class="empty">No posts yet.</p>
+      ) : (
+        <ul class="post-list">
+          {posts.map((post) => (
+            <li class="reveal">
+              <a href={`${base}/blog/${post.id}/`} lang={post.data.lang === 'zh' ? 'zh-CN' : 'en'}>
+                <span class="post-meta">
+                  <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                  {post.data.tags.length > 0 && ` · ${post.data.tags.join(' · ')}`}
+                  {post.data.draft && <span class="pill">draft</span>}
+                </span>
+                <h2>{post.data.title}</h2>
+                {post.data.description && <p>{post.data.description}</p>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
 </Base>

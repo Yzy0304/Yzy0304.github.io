@@ -25,6 +25,20 @@ npm run build      # 生产构建到 dist/，草稿不会被构建
 所有经历、成绩、项目文字都在 `src/data/profile.ts`（中英两份），改这一个文件即可。
 规则：只写简历里能找到依据的内容，不添加未经证实的数字。
 
+- 首页卡片与六个页面（学业 / 科研 / 项目 / 实习 / 简历 / 日常）的标题和简介：`pages` 字段。
+- 实习：在 `internships` 里加条目后，「实习」页会自动显示；为空时显示“正在寻找实习”。
+- 日常：`life` 里加地点/经历（可选 `image: '/images/life/xxx.jpg'`）；博客文章打上 `life` 或 `生活` 标签也会出现在「日常」页。
+
+## 首页小助手 Mochi
+
+右下角的小宠物是一个**离线**助手，只根据 `profile.ts` 回答（关键词匹配，不调用任何 API），逻辑在 `src/lib/assistant.ts`。
+以后要接入大模型：保留界面，把 `reply()` 换成请求你自己的后端，并把 `systemContext(lang)` 作为 system prompt。
+
+## 开场动画
+
+首页第一次打开时会像 Mac 开机的 “hello” 一样手写出 “welcome to my personal blog”（每个浏览器会话只播放一次，点击可跳过）。
+笔画数据由 `node scripts/gen-hello.mjs` 从单线字体 Hershey Script 生成到 `src/data/hello.ts`；改文字就改脚本里的 `LINES` 再运行一次。
+
 ## 部署
 
 推送到 `main` 后由 `.github/workflows/deploy.yml` 构建并发布。

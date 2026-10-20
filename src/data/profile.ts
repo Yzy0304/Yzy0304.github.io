@@ -21,6 +21,11 @@ type Entry = {
   link?: { label: string; href: string };
 };
 
+export const sectionKeys = ['academics', 'research', 'projects', 'internships', 'resume', 'life'] as const;
+export type SectionKey = (typeof sectionKeys)[number];
+
+type Course = { name: string; grade: string; score?: number };
+
 type Profile = {
   name: string;
   altName: string;
@@ -30,7 +35,10 @@ type Profile = {
   focus: string;
   summary: string;
   interests: string[];
-  nav: { bio: string; research: string; projects: string; education: string; blog: string; switchLang: string };
+  hero: { eyebrow: string; tagline: [string, string]; sub: string };
+  nav: Record<SectionKey | 'home' | 'blog', string> & { switchLang: string };
+  // Card + page copy for each section. `lead` is the page subtitle, `card` the home-card blurb.
+  pages: Record<SectionKey, { title: string; eyebrow: string; lead: string; card: string }>;
   sections: {
     summary: string;
     interests: string;
@@ -45,6 +53,12 @@ type Profile = {
   research: Entry[];
   projects: Entry[];
   education: Entry[];
+  courses: { school: string; groups: { label: string; items: Course[] }[] }[];
+  // Empty until there is an internship on the résumé; the page then shows the "open to" state.
+  internships: Entry[];
+  seeking: { label: string; value: string }[];
+  // Life moments. Keep to things that actually happened; add photos under public/images/life/.
+  life: { title: string; place: string; period: string; text: string; image?: string }[];
   skills: { label: string; items: string }[];
   contactNote: string;
 };
@@ -60,7 +74,60 @@ export const profile: Record<Lang, Profile> = {
     summary:
       'Artificial Intelligence undergraduate ranked in the top 20% of the program (weighted average 87.1/100). I am researching CLIP-based zero- and few-shot anomaly detection for aero-engine blades, and I am looking for research or algorithm internships in CV, VLMs, and anomaly detection.',
     interests: ['Computer Vision', 'Vision-Language Models', 'Industrial Anomaly Detection', 'Reinforcement Learning'],
-    nav: { bio: 'Bio', research: 'Research', projects: 'Projects', education: 'Education', blog: 'Blog', switchLang: '中文' },
+    hero: {
+      eyebrow: 'Zhenyu Yao · 姚振宇',
+      tagline: ['Teaching machines', 'to spot anomalies.'],
+      sub: 'AI undergraduate at Huazhong University of Science and Technology, working on vision-language models for industrial anomaly detection.',
+    },
+    nav: {
+      home: 'Home',
+      academics: 'Academics',
+      research: 'Research',
+      projects: 'Projects',
+      internships: 'Internships',
+      resume: 'Résumé',
+      life: 'Life',
+      blog: 'Blog',
+      switchLang: '中文',
+    },
+    pages: {
+      academics: {
+        title: 'Academics',
+        eyebrow: 'HUST · UC Berkeley',
+        lead: 'B.Eng. in Artificial Intelligence at HUST, with a summer of coursework at UC Berkeley.',
+        card: 'Top 20% of the AI program, with a weighted average of 87.1.',
+      },
+      research: {
+        title: 'Research',
+        eyebrow: 'Anomaly detection',
+        lead: 'CLIP-based zero- and few-shot anomaly detection for aero-engine blades.',
+        card: 'Training-free test-time augmentation for zero-shot AnomalyCLIP on AeBAD-S.',
+      },
+      projects: {
+        title: 'Projects',
+        eyebrow: 'Build & learn',
+        lead: 'From search and game trees to reinforcement learning and neural networks.',
+        card: 'UC Berkeley CS188 Pacman AI: search, games, RL, inference, and ML.',
+      },
+      internships: {
+        title: 'Internships',
+        eyebrow: 'Experience',
+        lead: 'Looking for research or algorithm internships in CV, VLMs, and anomaly detection.',
+        card: 'Open to research and algorithm internships.',
+      },
+      resume: {
+        title: 'Résumé',
+        eyebrow: 'One page',
+        lead: 'Everything in one place. Print it or save it as a PDF.',
+        card: 'Education, research, projects, and skills on one page.',
+      },
+      life: {
+        title: 'Life',
+        eyebrow: 'Beyond the lab',
+        lead: 'Places, moments, and notes from everyday life.',
+        card: 'From Wuhan to Berkeley, and the notes in between.',
+      },
+    },
     sections: {
       summary: 'Professional Summary',
       interests: 'Interests',
@@ -121,6 +188,66 @@ export const profile: Record<Lang, Profile> = {
         ],
       },
     ],
+    courses: [
+      {
+        school: 'Huazhong University of Science and Technology',
+        groups: [
+          {
+            label: 'Mathematics',
+            items: [
+              { name: 'Control Theory', grade: '98', score: 98 },
+              { name: 'Calculus I', grade: '97', score: 97 },
+              { name: 'Discrete Mathematics', grade: '95', score: 95 },
+              { name: 'Linear Algebra', grade: '92', score: 92 },
+              { name: 'Probability & Statistics', grade: '87', score: 87 },
+            ],
+          },
+          {
+            label: 'Computing & AI',
+            items: [
+              { name: 'Computer Organization & Embedded Systems', grade: '93', score: 93 },
+              { name: 'Signal Analysis', grade: '92', score: 92 },
+              { name: 'Object-Oriented Programming', grade: '92', score: 92 },
+              { name: 'Data Science Foundations', grade: '89', score: 89 },
+              { name: 'Introduction to AI', grade: '88', score: 88 },
+              { name: 'Data Structures & Algorithm Analysis', grade: '87', score: 87 },
+            ],
+          },
+        ],
+      },
+      {
+        school: 'UC Berkeley Summer Sessions',
+        groups: [
+          {
+            label: 'Summer C 2026',
+            items: [
+              { name: 'COMPSCI 188 Artificial Intelligence', grade: 'A' },
+              { name: 'DATA C8 Foundations of Data Science', grade: 'A−' },
+            ],
+          },
+        ],
+      },
+    ],
+    internships: [],
+    seeking: [
+      { label: 'Role', value: 'Research or algorithm intern' },
+      { label: 'Areas', value: 'Computer vision · Vision-language models · Anomaly detection' },
+      { label: 'Toolkit', value: 'Python, PyTorch, CLIP, C++, Git, Linux' },
+    ],
+    life: [
+      {
+        title: 'Wuhan',
+        place: 'Huazhong University of Science and Technology',
+        period: 'Since Sep 2024',
+        text: 'Home base for my Artificial Intelligence degree.',
+      },
+      {
+        title: 'Berkeley',
+        place: 'UC Berkeley Summer Sessions',
+        period: 'Summer 2026',
+        text: 'A summer as an international visiting undergraduate, taking CS188 and Data C8.',
+      },
+    ],
     skills: [
       { label: 'Languages', items: 'Python, C++, C, MySQL' },
       { label: 'ML / CV', items: 'PyTorch, CLIP, computer vision, reinforcement learning' },
@@ -139,7 +266,60 @@ export const profile: Record<Lang, Profile> = {
     summary:
       '华中科技大学人工智能专业本科生，专业排名前 20%，加权平均分 87.1/100。正在开展基于 CLIP 的航空发动机叶片零/少样本异常检测研究，寻找计算机视觉、视觉语言模型与异常检测方向的科研或算法实习。',
     interests: ['计算机视觉', '视觉语言模型', '工业异常检测', '强化学习'],
-    nav: { bio: '简介', research: '科研', projects: '项目', education: '教育', blog: '博客', switchLang: 'EN' },
+    hero: {
+      eyebrow: '姚振宇 · Zhenyu Yao',
+      tagline: ['让机器', '看见异常。'],
+      sub: '华中科技大学人工智能专业本科生，研究视觉语言模型在工业异常检测中的应用。',
+    },
+    nav: {
+      home: '首页',
+      academics: '学业',
+      research: '科研',
+      projects: '项目',
+      internships: '实习',
+      resume: '简历',
+      life: '日常',
+      blog: '博客',
+      switchLang: 'EN',
+    },
+    pages: {
+      academics: {
+        title: '学业',
+        eyebrow: '华中科技大学 · UC Berkeley',
+        lead: '华中科技大学人工智能专业本科，并在 UC Berkeley 完成暑期课程。',
+        card: '专业前 20%，加权平均分 87.1。',
+      },
+      research: {
+        title: '科研',
+        eyebrow: '异常检测',
+        lead: '基于 CLIP 的航空发动机叶片零/少样本异常检测。',
+        card: '在 AeBAD-S 上为零样本 AnomalyCLIP 引入免训练的测试时增强。',
+      },
+      projects: {
+        title: '项目',
+        eyebrow: '动手实践',
+        lead: '从搜索与博弈树，到强化学习与神经网络。',
+        card: 'UC Berkeley CS188 Pacman AI：搜索、博弈、强化学习、推断与机器学习。',
+      },
+      internships: {
+        title: '实习',
+        eyebrow: '实践经历',
+        lead: '寻找计算机视觉、视觉语言模型与异常检测方向的科研或算法实习。',
+        card: '欢迎科研与算法实习机会。',
+      },
+      resume: {
+        title: '简历',
+        eyebrow: '一页纸',
+        lead: '所有信息集中在一页，可直接打印或另存为 PDF。',
+        card: '教育、科研、项目与技能，一页看完。',
+      },
+      life: {
+        title: '日常生活',
+        eyebrow: '实验室之外',
+        lead: '去过的地方、经历的瞬间，以及生活里的随笔。',
+        card: '从武汉到伯克利，以及路上的点滴。',
+      },
+    },
     sections: {
       summary: '个人简介',
       interests: '研究兴趣',
@@ -196,6 +376,66 @@ export const profile: Record<Lang, Profile> = {
         period: '2026.06.22 – 2026.08.14',
         highlight: 'GPA 3.85/4.00',
         bullets: ['COMPSCI 188 Artificial Intelligence（A）、DATA C8 Foundations of Data Science（A−）。'],
+      },
+    ],
+    courses: [
+      {
+        school: '华中科技大学',
+        groups: [
+          {
+            label: '数学基础',
+            items: [
+              { name: '控制原理', grade: '98', score: 98 },
+              { name: '微积分（B）（上）', grade: '97', score: 97 },
+              { name: '离散数学', grade: '95', score: 95 },
+              { name: '线性代数', grade: '92', score: 92 },
+              { name: '概率论与数理统计（B）', grade: '87', score: 87 },
+            ],
+          },
+          {
+            label: '计算机与人工智能',
+            items: [
+              { name: '计算机组成与嵌入式系统', grade: '93', score: 93 },
+              { name: '信号分析', grade: '92', score: 92 },
+              { name: '面向对象的程序设计', grade: '92', score: 92 },
+              { name: '数据科学基础', grade: '89', score: 89 },
+              { name: '人工智能导论', grade: '88', score: 88 },
+              { name: '数据结构与算法分析', grade: '87', score: 87 },
+            ],
+          },
+        ],
+      },
+      {
+        school: 'UC Berkeley Summer Sessions',
+        groups: [
+          {
+            label: 'Summer C 2026',
+            items: [
+              { name: 'COMPSCI 188 Artificial Intelligence', grade: 'A' },
+              { name: 'DATA C8 Foundations of Data Science', grade: 'A−' },
+            ],
+          },
+        ],
+      },
+    ],
+    internships: [],
+    seeking: [
+      { label: '岗位', value: '科研实习 / 算法实习' },
+      { label: '方向', value: '计算机视觉 · 视觉语言模型 · 异常检测' },
+      { label: '技能', value: 'Python、PyTorch、CLIP、C++、Git、Linux' },
+    ],
+    life: [
+      {
+        title: '武汉',
+        place: '华中科技大学',
+        period: '2024.09 起',
+        text: '攻读人工智能本科的地方。',
+      },
+      {
+        title: '伯克利',
+        place: 'UC Berkeley Summer Sessions',
+        period: '2026 年夏',
+        text: '以国际访问本科生身份度过一个夏天，修读 CS188 与 Data C8。',
       },
     ],
     skills: [

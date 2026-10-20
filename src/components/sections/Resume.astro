@@ -1,0 +1,76 @@
+---
+import Icon from '../Icon.astro';
+import { profile, links, type Lang } from '../../data/profile';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = profile[lang];
+const zh = lang === 'zh';
+const t = zh ? { print: '打印 / 保存为 PDF', email: '邮件联系' } : { print: 'Print / Save as PDF', email: 'Email me' };
+const groups = [
+  { title: p.sections.education, items: p.education },
+  { title: p.sections.research, items: p.research },
+  { title: p.sections.projects, items: p.projects },
+];
+---
+
+<div class="resume-actions">
+  <button type="button" class="btn btn-primary btn-sm print-btn"><Icon name="printer" size={15} />{t.print}</button>
+  <a class="btn btn-secondary btn-sm" href={`mailto:${links.email}`}>{t.email}</a>
+</div>
+
+<section class="section">
+  <div class="wrap">
+    <article class="resume-sheet reveal">
+      <header>
+        <div>
+          <h2>{p.name} <span style="color:var(--muted);font-weight:500;font-size:0.6em">{p.altName}</span></h2>
+          <p>{p.role}</p>
+          <p>{p.focus}</p>
+        </div>
+        <div class="contact">
+          <a href={`mailto:${links.email}`}>{links.email}</a><br />
+          <a href={`mailto:${links.schoolEmail}`}>{links.schoolEmail}</a><br />
+          <a href={links.github}>github.com/Yzy0304</a>
+        </div>
+      </header>
+
+      <section>
+        <h3 class="r-title">{p.sections.summary}</h3>
+        <p style="margin:0">{p.summary}</p>
+      </section>
+
+      {groups.map((g) => (
+        <section>
+          <h3 class="r-title">{g.title}</h3>
+          {g.items.map((e) => (
+            <div class="r-item">
+              <div class="entry-head">
+                <h4>{e.title}</h4>
+                <span class="period">{e.period}</span>
+              </div>
+              {e.org && <p class="org">{e.org}{e.highlight && ` · ${e.highlight}`}</p>}
+              <ul class="bullets">{e.bullets.map((b) => <li>{b}</li>)}</ul>
+            </div>
+          ))}
+        </section>
+      ))}
+
+      <section>
+        <h3 class="r-title">{p.sections.skills}</h3>
+        <dl class="kv">
+          {p.skills.map((s) => (
+            <>
+              <dt>{s.label}</dt>
+              <dd>{s.items}</dd>
+            </>
+          ))}
+        </dl>
+      </section>
+    </article>
+  </div>
+</section>
+
+<script>
+  document.querySelector('.print-btn')?.addEventListener('click', () => window.print());
+</script>
