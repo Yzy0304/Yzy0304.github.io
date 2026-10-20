@@ -1,0 +1,95 @@
+---
+// Chibi Felix: an Asian idol-style character with shoulder-length curtain-bang
+// hair, a headset mic and a stage jacket. Class names (pet-eyes, pet-look,
+// pet-mouth…) are animated by Pet.astro; `id` keeps gradient ids unique.
+interface Props { id: string; class?: string; viewBox?: string }
+const { id, class: cls, viewBox = '0 0 120 120' } = Astro.props;
+const g = (name: string) => `${id}-${name}`;
+---
+
+<svg class={cls} viewBox={viewBox} aria-hidden="true">
+  <defs>
+    <linearGradient id={g('hair')} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b3350" />
+      <stop offset="1" stop-color="#17141f" />
+    </linearGradient>
+    <linearGradient id={g('skin')} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffeadb" />
+      <stop offset="1" stop-color="#f8d4bd" />
+    </linearGradient>
+    <linearGradient id={g('jacket')} x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7d7aff" />
+      <stop offset="0.6" stop-color="#5e5ce6" />
+      <stop offset="1" stop-color="#0a84ff" />
+    </linearGradient>
+    <radialGradient id={g('iris')} cx="0.5" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#7a4b33" />
+      <stop offset="1" stop-color="#1f1412" />
+    </radialGradient>
+  </defs>
+
+  <g class="pet-bob">
+    <!-- hair behind the head (nape), mostly hidden by the face -->
+    <path d="M27 50C26 28 41 14 60 14S94 28 93 50C93 61 92 68 89 75L84.5 73 82 79.5 76 75 60 77 44 75 38 79.5 35.5 73 31 75C28 68 27 61 27 50Z" fill={`url(#${g('hair')})`} />
+
+    <!-- body: stage jacket over a white tee, small chain necklace -->
+    <g transform="translate(0 -7)">
+      <path d="M38 128C38 104 45 92 60 92S82 104 82 128Z" fill={`url(#${g('jacket')})`} />
+      <path d="M53 92.5 60 105 67 92.5Z" fill="#fff" />
+      <path d="M53 92.5 57 101M67 92.5 63 101" stroke="#fff" stroke-opacity="0.4" stroke-width="1.4" stroke-linecap="round" />
+      <rect x="55" y="77" width="10" height="16" rx="5" fill="#f2c7ad" />
+      <path d="M55.5 93Q60 99 64.5 93" fill="none" stroke="#e5e5ea" stroke-width="0.9" />
+      <g class="pet-arm left">
+        <rect x="34" y="96" width="9" height="19" rx="4.5" fill="#5e5ce6" />
+        <circle cx="38.5" cy="115.5" r="4" fill="#ffe3d0" />
+      </g>
+      <g class="pet-arm right">
+        <rect x="77" y="96" width="9" height="19" rx="4.5" fill="#0a84ff" />
+        <circle cx="81.5" cy="115.5" r="4" fill="#ffe3d0" />
+      </g>
+    </g>
+
+    <!-- head -->
+    <ellipse cx="34.5" cy="58" rx="3.6" ry="5" fill="#f6cdb4" />
+    <ellipse cx="85.5" cy="58" rx="3.6" ry="5" fill="#f6cdb4" />
+    <path d="M34.5 50C34.5 34 46 27 60 27S85.5 34 85.5 50C85.5 65 76 79 60 79S34.5 65 34.5 50Z" fill={`url(#${g('skin')})`} />
+    <ellipse cx="43" cy="66.5" rx="4.5" ry="2.6" fill="#ff8fa3" opacity="0.3" />
+    <ellipse cx="77" cy="66.5" rx="4.5" ry="2.6" fill="#ff8fa3" opacity="0.3" />
+    <path d="M60 62.5q.9 1.6 0 2.6" fill="none" stroke="#e0a98c" stroke-width="1.2" stroke-linecap="round" />
+    <path d="M43 50.8Q48.5 48.2 54 49.6M66 49.6Q71.5 48.2 77 50.8" fill="none" stroke="#2a2030" stroke-width="2.1" stroke-linecap="round" />
+
+    <g class="pet-look">
+      <g class="pet-eyes">
+        <ellipse cx="49" cy="57.5" rx="4.6" ry="5.6" fill={`url(#${g('iris')})`} />
+        <ellipse cx="71" cy="57.5" rx="4.6" ry="5.6" fill={`url(#${g('iris')})`} />
+        <circle cx="50.6" cy="55.3" r="1.7" fill="#fff" />
+        <circle cx="72.6" cy="55.3" r="1.7" fill="#fff" />
+        <circle cx="47.7" cy="59.8" r="0.8" fill="#fff" opacity="0.85" />
+        <circle cx="69.7" cy="59.8" r="0.8" fill="#fff" opacity="0.85" />
+        <path d="M44.2 54Q49 50.9 53.8 54M66.2 54Q71 50.9 75.8 54" fill="none" stroke="#1a1214" stroke-width="1.4" stroke-linecap="round" />
+      </g>
+      <g class="pet-happy" fill="none" stroke="#2a1c1c" stroke-width="2.2" stroke-linecap="round">
+        <path d="M44.5 58.5Q49 53 53.5 58.5M66.5 58.5Q71 53 75.5 58.5" />
+      </g>
+      <path class="pet-mouth smile" d="M55.6 69.8Q60 74 64.4 69.8" fill="none" stroke="#b4535e" stroke-width="1.7" stroke-linecap="round" />
+      <ellipse class="pet-mouth open" cx="60" cy="71" rx="3.2" ry="2.4" fill="#a3434f" />
+    </g>
+
+    <!-- layered wolf-cut side locks, flicking out at the jaw -->
+    <path d="M35 38C29 48 28.5 62 30.5 74L33.5 69.5 33 80.5 37 72.5 38.5 61C38.5 54 39.5 47 42 42Z" fill={`url(#${g('hair')})`} />
+    <path d="M85 38C91 48 91.5 62 89.5 74L86.5 69.5 87 80.5 83 72.5 81.5 61C81.5 54 80.5 47 78 42Z" fill={`url(#${g('hair')})`} />
+    <!-- textured curtain bangs parted near the middle -->
+    <path d="M33 47C32 30 45 20 60 20S88 30 87 47Q85 44 83.5 41Q83 46 81 50.5Q79 44 76 40Q75 45 72.5 47.5Q71 41 66.5 35.5Q64 39 62 41Q61.5 36 60 32Q58 37 54.5 40Q54 44 51 48Q49.5 42 46.5 39.5Q44 44 43 50Q40.5 45 39 41Q36.5 44 33 47Z" fill={`url(#${g('hair')})`} />
+    <path d="M45 20.5C52 17 63 16.6 72 19.2" fill="none" stroke="#fff" stroke-opacity="0.35" stroke-width="2.6" stroke-linecap="round" />
+    <path d="M39 30C37 33.5 36 37 35.6 40" fill="none" stroke="#fff" stroke-opacity="0.18" stroke-width="2" stroke-linecap="round" />
+
+    <!-- headset mic -->
+    <path d="M86.5 57C85.5 67 79 73 70.5 73" fill="none" stroke="#2c2c2e" stroke-width="1.6" stroke-linecap="round" />
+    <circle cx="69.5" cy="73" r="2.4" fill="#2c2c2e" />
+    <circle class="pet-light" cx="69.5" cy="73" r="1.1" fill="#ff9f0a" />
+
+    <!-- idol sparkles -->
+    <path class="pet-spark s1" d="M103 20l1.6 4.4 4.4 1.6-4.4 1.6L103 32l-1.6-4.4L97 26l4.4-1.6Z" fill="#ffd60a" />
+    <path class="pet-spark s2" d="M15 30l1.1 3 3 1.1-3 1.1L15 38.3l-1.1-3.1-3-1.1 3-1.1Z" fill="#bf5af2" />
+  </g>
+</svg>

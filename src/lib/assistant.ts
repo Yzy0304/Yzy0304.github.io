@@ -6,7 +6,7 @@
 
 import { profile, links, type Lang } from '../data/profile';
 
-export const petName = 'Mochi';
+export const petName = 'Felix';
 
 export type Reply = { text: string; links?: { label: string; href: string }[]; suggest?: string[] };
 
@@ -35,7 +35,7 @@ export function suggestions(lang: Lang) {
 const intents: Intent[] = [
   {
     id: 'pet',
-    keys: ['who are you', 'yourself', 'your name', 'are you', 'mochi', 'what are you', '你是谁', '你叫', '你是什么', '你的名字'],
+    keys: ['who are you', 'yourself', 'your name', 'are you', 'felix', 'what are you', '你是谁', '你叫', '你是什么', '你的名字'],
     answer: (lang) => ({
       text: L(
         lang,

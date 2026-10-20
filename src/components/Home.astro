@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Intro from './Intro.astro';
+import PetArt from './PetArt.astro';
 import { profile, links, type Lang } from '../data/profile';
 import { getPosts, formatDate } from '../lib/posts';
 import { petName } from '../lib/assistant';
@@ -178,7 +179,7 @@ const bar = (v: number) => `${Math.round(((v - 0.85) / 0.1) * 100)}%`;
         <span class="more">{t.chat}</span>
         <div class="t-art pet-stage" aria-hidden="true">
           <span class="pet-says">{t.petSample}</span>
-          <svg viewBox="0 0 120 120"><use href="#pet-face" /></svg>
+          <PetArt id="pet-tile" />
         </div>
       </button>
 
