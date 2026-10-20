@@ -39,7 +39,7 @@ const t = lang === 'zh'
   <section class="pet-chat" id="pet-chat" role="dialog" aria-label={t.open} hidden>
     <header class="pet-head">
       <span class="pet-avatar" aria-hidden="true">
-        <PetArt id="pet-avatar" viewBox="27 12 66 66" />
+        <PetArt id="pet-avatar" viewBox="29 13 62 62" />
       </span>
       <div>
         <strong>{petName}</strong>
@@ -274,16 +274,16 @@ const t = lang === 'zh'
     position: absolute; left: 18%; right: 18%; bottom: -4px; height: 8px; border-radius: 50%;
     background: rgba(0, 0, 0, 0.18); filter: blur(3px); animation: pet-shadow 3.2s ease-in-out infinite;
   }
-  .pet-bob { animation: pet-bob 3.2s ease-in-out infinite; transform-origin: 60px 120px; transform-box: view-box; }
+  .pet-bob { animation: pet-bob 3.2s ease-in-out infinite; transform-origin: 60px 116px; transform-box: view-box; }
   .pet-look { transition: transform 0.25s ease-out; }
-  .pet-eyes { animation: pet-blink 4.6s infinite; transform-origin: 60px 57px; transform-box: view-box; }
+  .pet-eyes { animation: pet-blink 4.6s infinite; transform-origin: 60px 51.5px; transform-box: view-box; }
   .pet-happy, .pet-mouth.open { opacity: 0; }
   .pet-light { transition: fill 0.3s; }
   .pet-spark { animation: pet-twinkle 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
   .pet-spark.s2 { animation-delay: 1.3s; }
   .pet-arm { transform-box: view-box; transition: transform 0.3s; }
-  .pet-arm.left { transform-origin: 38.5px 91px; }
-  .pet-arm.right { transform-origin: 81.5px 91px; }
+  .pet-arm.left { transform-origin: 45px 80px; }
+  .pet-arm.right { transform-origin: 75px 80px; }
   .pet:hover .pet-bob { animation-duration: 1.4s; }
   .pet:hover .pet-eyes, [data-state='wave'] .pet-eyes { opacity: 0; }
   .pet:hover .pet-happy, [data-state='wave'] .pet-happy { opacity: 1; }
