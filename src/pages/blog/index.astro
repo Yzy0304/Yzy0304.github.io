@@ -23,6 +23,7 @@ const posts = await getPosts();
           {posts.map((post) => (
             <li class="reveal">
               <a href={`${base}/blog/${post.id}/`} lang={post.data.lang === 'zh' ? 'zh-CN' : 'en'}>
+                {post.data.cover && <img class="thumb" src={post.data.cover} alt="" loading="lazy" />}
                 <span class="post-meta">
                   <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
                   {post.data.tags.length > 0 && ` · ${post.data.tags.join(' · ')}`}

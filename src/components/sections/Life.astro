@@ -40,6 +40,7 @@ const t = zh
         {posts.map((post) => (
           <li class="reveal">
             <a href={`${base}/blog/${post.id}/`} lang={post.data.lang === 'zh' ? 'zh-CN' : 'en'}>
+              {post.data.cover && <img class="thumb" src={post.data.cover} alt="" loading="lazy" />}
               <time class="post-meta" datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
               <h2>{post.data.title}</h2>
               {post.data.description && <p>{post.data.description}</p>}
