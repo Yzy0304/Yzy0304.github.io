@@ -8,6 +8,8 @@ const blog = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     description: z.string().optional(),
+    // Image path under public/, e.g. /images/uploads/photo.webp (set from the /admin/ editor).
+    cover: z.string().optional(),
     tags: z.array(z.string()).default([]),
     lang: z.enum(['en', 'zh']).default('zh'),
     draft: z.boolean().default(false),

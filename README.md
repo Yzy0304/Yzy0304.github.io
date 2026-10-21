@@ -10,6 +10,19 @@ npm run dev        # http://localhost:4321 ，草稿（draft: true）也会显�
 npm run build      # 生产构建到 dist/，草稿不会被构建
 ```
 
+## 用手机 / Mac 写博客、传图片（推荐）
+
+打开 **https://yzy0304.github.io/admin/** （Sveltia CMS，配置在 `public/admin/config.yml`）。
+
+1. **第一次使用**：在 GitHub → Settings → Developer settings → Personal access tokens → *Fine-grained tokens* 新建令牌：
+   *Repository access* 只选 `Yzy0304.github.io`，*Permissions → Contents* 选 **Read and write**，有效期按需。
+2. 在后台点「使用访问令牌登录」，粘贴令牌。浏览器会记住登录，手机和 Mac 各登录一次即可。
+3. 新建 / 修改文章，正文里可直接插入图片；照片会自动压缩到 2000px 以内并转成 WebP，存到 `public/images/uploads/`。
+4. 点保存即提交到 `main`，GitHub Actions 约 1 分钟后自动发布。勾选「草稿」的文章不会出现在网站上。
+5. 打上「生活」标签的文章会同时出现在「日常」页面；设置了封面图的文章在列表里会显示封面。
+
+令牌只保存在你自己的浏览器里；换设备或令牌过期时重新粘贴即可。不要把令牌发给别人。
+
 ## 写博客（从 Obsidian 复制）
 
 1. 复制 `src/content/blog/_template.md`，改名为 `英文短横线.md`（文件名就是网址，如 `clip-tta-notes.md` → `/blog/clip-tta-notes/`）。

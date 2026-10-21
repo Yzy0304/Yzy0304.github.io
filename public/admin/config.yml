@@ -1,0 +1,53 @@
+# Sveltia CMS (https://github.com/sveltia/sveltia-cms) — open /admin/ on a phone or Mac,
+# sign in with a GitHub personal access token. Every save is a commit to main, and the
+# deploy workflow republishes the site about a minute later.
+backend:
+  name: github
+  repo: Yzy0304/Yzy0304.github.io
+  branch: main
+  auth_methods: [token]
+
+app_title: 振宇的博客后台
+site_url: https://yzy0304.github.io
+display_url: https://yzy0304.github.io
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+media_libraries:
+  default:
+    config:
+      max_file_size: 30000000
+      slugify_filename: true
+      # Phone photos are shrunk to at most 2000px and converted to WebP before upload.
+      transformations:
+        raster_image: { format: webp, quality: 82, width: 2000, height: 2000 }
+
+collections:
+  - name: blog
+    label: 博客文章
+    label_singular: 文章
+    folder: src/content/blog
+    create: true
+    extension: md
+    format: frontmatter
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}} · {{date}}"
+    sortable_fields: [date, title]
+    preview_path: "blog/{{slug}}/"
+    fields:
+      - { label: 标题, name: title, widget: string }
+      - { label: 日期, name: date, widget: datetime, format: YYYY-MM-DD, time_format: false, default: "{{now}}" }
+      - { label: 摘要, name: description, widget: string, required: false, hint: 一句话，显示在文章列表里 }
+      - { label: 封面图, name: cover, widget: image, required: false }
+      - label: 标签
+        name: tags
+        widget: list
+        required: false
+        hint: 加上「生活」标签，文章会同时出现在「日常」页面
+      - label: 语言
+        name: lang
+        widget: select
+        options: [{ label: 中文, value: zh }, { label: English, value: en }]
+        default: zh
+      - { label: 草稿（勾选后不会发布）, name: draft, widget: boolean, default: false }
+      - { label: 正文, name: body, widget: markdown }
